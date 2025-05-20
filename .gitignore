@@ -1,0 +1,8 @@
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+.env
+
+
+**/scripts/__pycache__/
+**/_stg/

@@ -1,0 +1,32 @@
+{
+    "dev": {
+        "spnSecret": "DEV",
+        "capacity": "none",
+        "workspace": "PrecoVersusIPCA_DEV",
+        "adminUPNs": "9322eb4a-4132-4bd1-8df1-5cd3d1d2400b",
+        "semanticModelsParameters": {
+            "SqlServerInstance": "",
+            "SqlServerDatabase": ""
+        }
+    },
+    "test": {
+        "spnSecret": "TST",
+        "capacity": "none",
+        "workspace": "PrecoVersusIPCA_TST",
+        "adminUPNs": "9322eb4a-4132-4bd1-8df1-5cd3d1d2400b",
+        "semanticModelsParameters": {
+            "SqlServerInstance": "",
+            "SqlServerDatabase": ""
+        }
+    },
+    "main": {
+        "spnSecret": "PRD",
+        "capacity": "none",
+        "workspace": "PrecoVersusIPCA_PRD",
+        "adminUPNs": "9322eb4a-4132-4bd1-8df1-5cd3d1d2400b",
+        "semanticModelsParameters": {
+            "SqlServerInstance": "",
+            "SqlServerDatabase": ""
+        }
+    }
+}
