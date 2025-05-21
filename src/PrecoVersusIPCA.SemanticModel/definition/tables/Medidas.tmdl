@@ -1,0 +1,212 @@
+table Medidas
+	lineageTag: f17353a7-7a88-4fb3-a0ac-b7cf2693633a
+
+	measure 'Preco Unitario' = AVERAGE('Compras'[PrecoUnit])
+		formatString: 0.00
+		displayFolder: Análise
+		lineageTag: c9dda264-c3a4-4ecd-82e5-be933ac5f622
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Data Anterior' = ```
+			
+			
+			VAR __CompraAnterior = 
+			    OFFSET(
+			        -1,
+			        SUMMARIZE(
+			            ALL('Compras'), 
+			            'Calendario'[Data],
+			            'Item'[Item]
+			        ),
+			        ORDERBY('Calendario'[Data], ASC),
+			        PARTITIONBY('Item'[Item])
+			    )
+			
+			VAR __Data = 
+			    MAXX(__CompraAnterior, [Data])
+			
+			RETURN
+			    IF(
+			        ISINSCOPE('Calendario'[Data]) 
+			            && ISINSCOPE('Item'[Item])
+			            && NOT ISBLANK([Preco Unitario]),
+			        __Data
+			    ) 
+			
+			```
+		formatString: General Date
+		displayFolder: Análise
+		lineageTag: 7c867dc6-4a0f-436f-8f84-deb1f5e2d1bb
+
+	measure 'Preco Anterior' = ```
+			
+			
+			VAR __DataAnterior = [Data Anterior]
+			
+			RETURN
+			
+			    CALCULATE(
+			        [Preco Unitario],
+			        'Calendario'[Data] = __DataAnterior
+			    ) 
+			
+			
+			```
+		formatString: 0.00
+		displayFolder: Análise
+		lineageTag: aeccbd55-3fe2-4ac5-9b80-18cd6f962bf3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Preco Var' = ```
+			
+			VAR __PrecoAnterior =  [Preco Anterior]
+			
+			RETURN
+			    DIVIDE([Preco Unitario]-__PrecoAnterior, __PrecoAnterior)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Análise
+		lineageTag: c1e17d35-eddc-4d60-8772-472d6f1091ad
+
+	measure 'Data IPCA Fim' = ```
+			
+			    IF(
+			        [Data Anterior],
+			        EOMONTH(SELECTEDVALUE('Compras'[DataPedido]), -1) + 1
+			    ) 
+			
+			```
+		formatString: Short Date
+		displayFolder: Análise
+		lineageTag: 97630a2a-f740-4a65-bdfc-0b4ca784a9a5
+
+	measure 'Data IPCA Ini' = ```
+			
+			VAR __DataRef = [Data Anterior]
+			RETURN
+			    IF(
+			        __DataRef,
+			        EOMONTH(__DataRef, -1) + 1
+			    ) 
+			```
+		formatString: Short Date
+		displayFolder: Análise
+		lineageTag: debf9cfc-6db4-4c79-a049-80fd3363252d
+
+	measure 'IPCA Acumulado' = ```
+			
+			
+			VAR __Window = 
+			    WINDOW(
+			        1, ABS,
+			        0, REL,
+			        ALLSELECTED('IPCA'[Data])
+			    )
+			
+			RETURN
+			    CALCULATE(
+			        PRODUCTX(
+			            'IPCA',
+			            1 + 'IPCA'[VarMensal]
+			        ),
+			        __Window
+			    ) - 1
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Análise
+		lineageTag: 48c61162-d141-4629-abff-d395290b8726
+
+	measure 'IPCA Var' = ```
+			
+			    IF(
+			        [Data Anterior],
+			        CALCULATE(
+			            [IPCA Acumulado],
+			            DATESBETWEEN('Calendario'[Data], [Data IPCA Ini], [Data IPCA Fim]),
+			            ALL('Calendario'[Data]) 
+			        )
+			    ) 
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Análise
+		lineageTag: 2fa8ad71-75c7-444f-bf88-f299778a0bdb
+
+	measure 'Preco - IPCA' = [Preco Var] - [IPCA Var]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Análise
+		lineageTag: 211b72b8-09aa-44da-9bae-f09ed1a8fa79
+
+	measure 'Flag Var' = ```
+			
+			
+			VAR __DifPrecoVar = [Preco - IPCA]
+			
+			VAR __DataAnterior = [Data Anterior]
+			
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        NOT ISBLANK(__DataAnterior) && __DifPrecoVar > 0,  "🡥 acima IPCA",
+			        NOT ISBLANK(__DataAnterior) && __DifPrecoVar <= 0, "🡧 abaixo IPCA",
+			        NOT ISBLANK([Preco Unitario]) && ISBLANK(__DataAnterior), "Primeira compra"
+			    )
+			
+			```
+		displayFolder: Formatação Condicional
+		lineageTag: 0c8a557a-14bf-4193-b657-aaf4827e8ef0
+
+	measure 'Flag Filtro' =
+			
+			IF( [Flag Var] IN VALUES('Flag'[Flag]), 1 )
+		formatString: 0
+		displayFolder: Formatação Condicional
+		lineageTag: 9d6f8576-16a8-4ff8-97e1-78438b1f90ef
+
+	measure 'Flag Var Fundo' = ```
+			
+			
+			    SWITCH(
+			        [Flag Var], 
+			        "🡥 acima IPCA", "#ffb7b7", 
+			        "🡧 abaixo IPCA", "#d5f2cd",
+			        "Primeira compra", "#aed2e7"
+			    )
+			
+			```
+		displayFolder: Formatação Condicional
+		lineageTag: c5d66210-db51-409c-aea8-72fbc1b72d12
+
+	measure 'Flag Var Fonte' = ```
+			
+			    SWITCH(
+			        [Flag Var], 
+			        "🡥 acima IPCA", "#802626", 
+			        "🡧 abaixo IPCA", "#4b7041",
+			        "Primeira compra", "#1b4862"
+			    )
+			```
+		displayFolder: Formatação Condicional
+		lineageTag: fdaa4f35-9be3-4f07-a025-428eb08aae6e
+
+	column Value
+		isHidden
+		formatString: 0
+		lineageTag: 462e0ef1-b976-4bc9-b739-2b568175b903
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Medidas = calculated
+		mode: import
+		source = ```
+				{0} 
+				```
+
+	annotation PBI_Id = 3983287f682d40d1a70b8d5be138b0b3
+

@@ -1,0 +1,66 @@
+table Compras
+	lineageTag: 3fa2bc20-ba54-4b41-9fc2-91afdcc3eea8
+
+	column PedidoID
+		dataType: int64
+		formatString: 0
+		lineageTag: 63ce4bac-af92-465a-9187-79333e38fe78
+		summarizeBy: count
+		sourceColumn: PedidoID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DataPedido
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 409c0595-f879-4f56-9728-a5fa0b44bec2
+		summarizeBy: none
+		sourceColumn: DataPedido
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ItemID
+		dataType: int64
+		formatString: 0
+		lineageTag: 86f918c1-42b5-4488-998d-6c600b60dee9
+		summarizeBy: none
+		sourceColumn: ItemID
+
+		annotation SummarizationSetBy = Automatic
+
+	column QtdPedido
+		dataType: int64
+		formatString: 0
+		lineageTag: 942a0c4e-0c4c-45db-a818-c783e4fd85f1
+		summarizeBy: sum
+		sourceColumn: QtdPedido
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrecoUnit
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: a79024f8-c7e0-4b90-84d9-6ed0565ddc60
+		summarizeBy: sum
+		sourceColumn: PrecoUnit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	partition Compras = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(Web.Contents("https://raw.githubusercontent.com/alisonpezzott/preco-versus-ipca/refs/heads/main/dados/compras.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    PromotedHeaders = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    ChangedType = Table.TransformColumnTypes(PromotedHeaders,{{"PedidoID", Int64.Type}, {"DataPedido", type date}, {"ItemID", Int64.Type}, {"QtdPedido", Int64.Type}, {"PrecoUnit", Currency.Type}}, "en-US")
+				in
+				    ChangedType
+
+	annotation PBI_NavigationStepName = Navegacao
+
+	annotation PBI_ResultType = Table
+

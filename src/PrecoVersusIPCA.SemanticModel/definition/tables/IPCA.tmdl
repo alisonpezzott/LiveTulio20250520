@@ -1,0 +1,71 @@
+table IPCA
+	lineageTag: 8d0d1d78-0ffc-43e4-9b32-20b80c462ea6
+
+	column Data
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c17fcfd1-81bd-4b04-bd9a-037c486b4b12
+		summarizeBy: none
+		sourceColumn: Data
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column VarMensal
+		dataType: double
+		lineageTag: 460b9e40-f1ee-4b8e-9a5b-d70fcf9964fb
+		summarizeBy: sum
+		sourceColumn: VarMensal
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition IPCA = m
+		mode: import
+		source = ```
+				let
+				    DataInicial = Date.ToText(#date(2021, 1, 1), "dd/MM/yyyy"),
+				    DataFinal = Date.ToText(Date.From(DateTime.LocalNow()), "dd/MM/yyyy"),
+				
+				    Url = "https://api.bcb.gov.br",
+				    RelativePath = "dados/serie/bcdata.sgs.433/dados", 
+				    
+				    Query = [
+				        formato = "json",
+				        dataInicial = DataInicial,
+				        dataFinal = DataFinal
+				    ],
+				
+				    Request = Web.Contents(
+				        Url,
+				        [ 
+				            RelativePath = RelativePath,
+				            Query = Query 
+				        ]
+				    ),
+				
+				    Response = Json.Document(Request),
+				    
+				    Tabela = Table.FromRows(
+				        List.Transform(Response, Record.FieldValues), 
+				        {"Data", "VarMensal"}
+				    ),
+				    
+				    Adequacao = Table.TransformColumns(
+				        Tabela,
+				        {
+				            {"Data", Date.From, type date}, 
+				            {"VarMensal", each Number.FromText(_,"en-US") * 0.01, type number} 
+				        }
+				    )
+				
+				in
+				    Adequacao
+				```
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

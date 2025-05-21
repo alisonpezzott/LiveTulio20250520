@@ -1,0 +1,40 @@
+table Flag
+	lineageTag: f7802833-b13a-4cb8-8ca2-968251dae04b
+
+	column Flag
+		lineageTag: fa36040d-8877-475b-9c39-4ade58aed373
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Flag]
+		sortByColumn: FlagID
+
+		annotation SummarizationSetBy = Automatic
+
+	column FlagID
+		isHidden
+		formatString: 0
+		lineageTag: bf8bfdff-f5f9-40ef-9924-49bb6f3a194d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [FlagID]
+
+		annotation SummarizationSetBy = User
+
+	partition Flag = calculated
+		mode: import
+		source = ```
+				
+				    DATATABLE(
+				        "Flag", STRING, "FlagID", INTEGER,
+				        {
+				            {"🡥 acima IPCA", 0},
+				            {"🡧 abaixo IPCA", 1},
+				            {"Primeira compra", 2}
+				
+				        }
+				    )
+				   
+				```
+
+	annotation PBI_Id = cd88705475d44a2d98cf964010fc71b0
+

@@ -1,0 +1,34 @@
+table Item
+	lineageTag: d9512e62-52fb-4d0a-9e05-6b1f26f32f23
+
+	column ItemID
+		dataType: int64
+		formatString: 0
+		lineageTag: ee478b42-0543-4c3f-a035-51fb052dcff4
+		summarizeBy: none
+		sourceColumn: ItemID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item
+		dataType: string
+		lineageTag: a7b7466f-cd9a-435a-af8f-744b659cd550
+		summarizeBy: none
+		sourceColumn: Item
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Item = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(Web.Contents("https://raw.githubusercontent.com/alisonpezzott/preco-versus-ipca/refs/heads/main/dados/item.csv"),[Delimiter=",", Columns=2, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    PromotedHeaders = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    ChangedType = Table.TransformColumnTypes(PromotedHeaders,{{"ItemID", Int64.Type}})
+				in
+				    ChangedType
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

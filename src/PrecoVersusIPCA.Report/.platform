@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "PrecoVersusIPCA"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "daa7b554-1105-4567-ab9b-14cb90d94731"
+  }
+}

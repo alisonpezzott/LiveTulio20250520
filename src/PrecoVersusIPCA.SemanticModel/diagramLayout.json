@@ -1,0 +1,101 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 1180.2783725910067,
+            "y": 5.6852248394004263
+          },
+          "nodeIndex": "Medidas",
+          "nodeLineageTag": "f17353a7-7a88-4fb3-a0ac-b7cf2693633a",
+          "size": {
+            "height": 72,
+            "width": 234
+          },
+          "zIndex": 4,
+          "expandedHeight": 300
+        },
+        {
+          "location": {
+            "x": 869.38329764453965,
+            "y": 0
+          },
+          "nodeIndex": "Flag",
+          "nodeLineageTag": "f7802833-b13a-4cb8-8ca2-968251dae04b",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 171.75588865096361,
+            "y": 488.55460385438982
+          },
+          "nodeIndex": "Compras",
+          "nodeLineageTag": "3fa2bc20-ba54-4b41-9fc2-91afdcc3eea8",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 28.753747323340463,
+            "y": 0
+          },
+          "nodeIndex": "Item",
+          "nodeLineageTag": "d9512e62-52fb-4d0a-9e05-6b1f26f32f23",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 709.14346895074948,
+            "y": 532.06209850107075
+          },
+          "nodeIndex": "IPCA",
+          "nodeLineageTag": "8d0d1d78-0ffc-43e4-9b32-20b80c462ea6",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 365.41327623126335,
+            "y": 0
+          },
+          "nodeIndex": "Calendario",
+          "nodeLineageTag": "44759d6f-04d4-4c09-b8f4-df26d0bae5e6",
+          "size": {
+            "height": 296.13704496788012,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Todas as tabelas",
+      "zoomValue": 51.773835920177383,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas as tabelas",
+  "defaultDiagram": "Todas as tabelas"
+}
